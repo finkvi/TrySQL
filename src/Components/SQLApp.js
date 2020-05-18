@@ -98,9 +98,7 @@ class SQLApp extends React.Component {
             <Typography className={classes.appTitleText}>
               Тест для стажеров по SQL
             </Typography>
-            <Button autoFocus color="inherit" onClick={this.handleSendAnswers}>
-              Отправить ответы
-            </Button>
+            <SendAnswers />
           </Toolbar>
         </AppBar>
         <Grid 
@@ -108,27 +106,15 @@ class SQLApp extends React.Component {
           spacing={1}
           direction="row"
         >
-          <Grid container className="AppHeader" spacing={1} direction="row">
-               <Grid className="AppName" item xs={10}>
-                 <Paper>
-                  <Typography>
-                    Тест для стажеров по SQL
-                  </Typography>
-                 </Paper> 
-                </Grid>
-                <Grid className="SendAnswers"item xs={2}>
-                  <SendAnswers />
-                </Grid>
-          </Grid>
-          <Grid className="SampleData" item xs={5}>
-            <ErrorBoundary>
-              <SampleData tables={alasql.tables} />
-            </ErrorBoundary>
-          </Grid>
-          <Grid className="Tasks" item xs={7}>
+          <Grid className="Tasks" item xs={6}>
             <SQLTasks currentVariant={this.state.currentVariant}/>
             <ErrorBoundary>
               <SQLInput alasql={alasql} changeTables={this.changeTables}/>
+            </ErrorBoundary>
+          </Grid>
+          <Grid className="SampleData" item xs={6}>
+            <ErrorBoundary>
+              <SampleData tables={alasql.tables} />
             </ErrorBoundary>
           </Grid>
         </Grid>
