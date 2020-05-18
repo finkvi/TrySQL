@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Grid, Paper, Typography, Button }  from '@material-ui/core';
+import { Grid, Paper, Typography, Button, RadioGroup, FormControlLabel, Radio, FormLabel }  from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import Editor from 'react-simple-code-editor';
@@ -9,6 +9,8 @@ import 'prismjs/components/prism-sql';
 import 'prismjs/themes/prism.css';
 
 import DataTableMU from './DataTableMU';
+
+import { maxTasks } from './tasks';
 
 const styles = {
   root: {
@@ -74,20 +76,36 @@ function ShowResult(props) {
 class SQLInput extends React.Component {
     constructor(props) {
         super(props);
+
+        this.handleRunClick = this.handleRunClick.bind(this);
+        this.handleValueChange = this.handleValueChange.bind(this);
+        this.handleChangeTask = this.handleChangeTask.bind(this);
+        
+        let answers = [];
+        for (let i = 0; i < maxTasks; i++) answers[i] = localStorage.getItem('answer' + i) 
+            || '-- SQL код для задания #' + (i + 1)
+
+        if (!localStorage.getItem('answer0')) {
+            answers[0] +=`
+-- Для примера работы, раскоментируйте этот код и нажмите кнопку Выполнить
+/*
+SELECT last_name, salary FROM STAFF
+WHERE sex = 'F'
+*/
+`
+        }
+
         this.state = {
-            sql: `SELECT * FROM STAFF
-WHERE sex = "F"`,
-            res: "Здесь результат выполнения SQL запроса",
+            task: 0,
+            sql: answers,
+            res: "Здесь отображается результат выполнения SQL запроса",
             error: false
         };
-        
-        this.handleRunClick = this.handleRunClick.bind(this);
-        this.handleSaveClick = this.handleSaveClick.bind(this);
     }
     
     handleRunClick(e) {
         //console.log("Run");
-        this.props.alasql.promise(this.state.sql)
+        this.props.alasql.promise(this.state.sql[this.state.task])
         .then(res => {
             this.setState({
                 res: res,
@@ -105,10 +123,23 @@ WHERE sex = "F"`,
         });
     }
     
-    handleSaveClick(e) {
-        return this.props.saveCurrentSQL();
+    handleValueChange(e) {
+        let sql = this.state.sql;
+        sql[this.state.task] = e;
+
+        localStorage.setItem('answer' + this.state.task, e);
+        this.setState ({
+            sql: sql
+        });
     }
     
+    handleChangeTask (e) {
+        this.setState({
+            task: parseInt(e.target.value, 10)
+        });
+    }
+    
+
     render() {
         return (
             <Grid 
@@ -133,29 +164,37 @@ WHERE sex = "F"`,
                         }}
                     >
                         <Editor
-                            value={this.state.sql}
-                            onValueChange={sql => this.setState({ sql })}
+                            value={this.state.sql[this.state.task]}
+                            onValueChange={this.handleValueChange}
                             highlight={code => highlight(code, languages.sql)}
                             padding={10}
                             placeholder="Напишите и запустите SQL"
                             style={{
                               fontFamily: '"Fira code", "Fira Mono", monospace',
                               fontSize: 12,
-                              minHeight: 80,
+                              minHeight: 130,
                             }}
                         />
                     </Paper>
+                </Grid>
+                <Grid item xs={4}>
+                    <FormLabel component="legend">Ваши ответы на задания</FormLabel>
+                    <RadioGroup aria-label="tasks" name="tasks" value={this.state.task} onChange={this.handleChangeTask} row>
+                            {this.state.sql.map((t, index) => {
+                                return (
+                                    <FormControlLabel labelPlacement="top" key={index} value={index} 
+                                        control={
+                                            <Radio size="small" />
+                                        } label={'#' + (index+1)} />
+                                );
+                            })}
+                    </RadioGroup>
                 </Grid>
                 <Grid item xs={2}>
                     <Button variant="contained" color="primary" onClick={this.handleRunClick}>
                         Выполнить
                     </Button>
 
-                </Grid>
-                <Grid item xs={2}>
-                    <Button variant="contained" color="secondary" onClick={this.handleSaveClick}>
-                        Сохранить
-                    </Button>    
                 </Grid>
                 <Grid item xs={12}>
                     <ShowResult res={this.state} />

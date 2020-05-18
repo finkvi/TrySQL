@@ -13,7 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 
-import tasks from './tasks';
+import { sqltasks } from './tasks';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -37,16 +37,18 @@ const styles = {
 class TasksRadioButtons extends React.Component {
     constructor (props) {
         super(props);
+
+        this.state = {
+          currentTask: 0
+        }
+
         this.handleChangeTask = this.handleChangeTask.bind(this);
-        this.handleChangeVariant = this.handleChangeVariant.bind(this);
     }
     
     handleChangeTask(e) {
-      return this.props.setCurrentTask(e);
-    }
-    
-    handleChangeVariant(e) {
-      return this.props.setCurrentVariant(e);
+      this.setState({
+        currentTask: parseInt(e.target.value, 10)
+      });
     }
     
     render () {
@@ -56,12 +58,12 @@ class TasksRadioButtons extends React.Component {
             justify="flex-start"
             spacing={1}
           >
-            <Grid item xs={9}>
+            <Grid item xs={12}>
               <Paper className={this.props.classes.paper}>
                 <FormControl component="fieldset">
                   <FormLabel component="legend">Задания</FormLabel>
-                      <RadioGroup aria-label="tasks" name="tasks" value={this.props.currentTask} onChange={this.handleChangeTask} row>
-                          {tasks.tasks.map((t, index) => {
+                      <RadioGroup aria-label="tasks" name="tasks" value={this.state.currentTask} onChange={this.handleChangeTask} row>
+                          {sqltasks.tasks.map((t, index) => {
                               return (
                                  <FormControlLabel labelPlacement="end" key={index} value={index} 
                                     control={
@@ -72,20 +74,7 @@ class TasksRadioButtons extends React.Component {
                               );
                           })}
                       </RadioGroup>
-                  <FormHelperText>{tasks.desc}</FormHelperText>
-                </FormControl>
-              </Paper>
-            </Grid>
-            <Grid item xs={3}>
-              <Paper className={this.props.classes.paper}>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">Вариант</FormLabel>
-                      <RadioGroup aria-label="variants" name="variants" value={this.props.currentVariant} onChange={this.handleChangeVariant} row>
-                          {tasks.tasks[this.props.currentTask].variants.map((v, index) => {
-                              return (<FormControlLabel labelPlacement="end" key={index} value={index} 
-                                control={<Radio size="small" />} label={'#' +(index + 1)} />);
-                          })}
-                      </RadioGroup>
+                  <FormHelperText>{sqltasks.desc}</FormHelperText>
                 </FormControl>
               </Paper>
             </Grid>
@@ -93,8 +82,8 @@ class TasksRadioButtons extends React.Component {
               <Paper className={this.props.classes.paper}>
                 <Typography>
                   {this.props.currentVariant !== '' 
-                    ? tasks.tasks[this.props.currentTask].variants[this.props.currentVariant]
-                    : 'Выберите вариант задания'
+                    ? sqltasks.tasks[this.state.currentTask].variants[this.props.currentVariant]
+                    : 'Не указан вариант задания'
                   }
                 </Typography>
               </Paper>

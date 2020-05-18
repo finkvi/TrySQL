@@ -47,9 +47,10 @@ CREATE TABLE IF NOT EXISTS STAFF
 
 DataStructure.STAFF.SampleData = `
 INSERT INTO STAFF VALUES
-      (5, 'Maria', 'Petrova','F',1.5, 1500)
-    , (1, 'Ivan', 'Ivashov','M',4.5, 5500)
-    , (3, 'Daria', 'Kulakova','F',2, 3500)
+      (5, 'Maria', 'Petrova','F', 1.5, 1500)
+    , (1, 'Ivan', 'Ivashov','M', 4.5, 5500)
+    , (3, 'Daria', 'Kulakova','F', 2, 3500)
+    , (4, 'Sergey', 'Zarubin', 'M', 5, 4200) 
 `;
 
 DataStructure.CLIENT = {

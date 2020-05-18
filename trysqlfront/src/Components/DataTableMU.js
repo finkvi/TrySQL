@@ -19,7 +19,7 @@ const styles = {
     fontSize: '10px',
     fontWeight: 'bold',
   },
-  rows: {
+  cell: {
     fontSize: '10px',
   },
 };
@@ -29,7 +29,7 @@ const DataTableRow = withStyles(styles)((props) =>
     return (
       <TableRow key={props.row}>
         {Object.keys(props.row).map((key, index) => {
-          return <TableCell className={props.classes.rows} key={index}>{props.row[key]}</TableCell>;
+          return <TableCell className={props.classes.cell} key={index}>{props.row[key]}</TableCell>;
         })}
       </TableRow>
     );
@@ -37,7 +37,6 @@ const DataTableRow = withStyles(styles)((props) =>
 );
 
 class DataTableMU extends React.Component {
-  
     render() {
         //if (this.props.table === undefined) return (<div>Таблица не задана или удалена</div>); 
         let t = this.props.data;
